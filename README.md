@@ -4,11 +4,11 @@ The current version is 1.1
 
 ### What is this repository for? ###
 
-*ASIP contains the unerlying services manager and IO support for setting pin modes and reading and writing digital and analog pins.
-*asipPixels supports neopixel (WS281x) LEDs
-*asipLCD supports 128X64 I2C OLED lcd panels
-*asipRobot supports Motor control and other features of the Mirto robot boards
-*asipHeading provides compass heading using the HMC5883L magnetometer
+* ASIP contains the underlying services manager and IO support for setting pin modes and reading and writing digital and analog pins.
+* asipPixels supports neopixel (WS281x) LEDs
+* asipLCD supports 128X64 I2C OLED lcd panels
+* asipRobot supports Motor control and other features of the Mirto robot boards
+* asipHeading provides compass heading using the HMC5883L magnetometer
 
 
 
