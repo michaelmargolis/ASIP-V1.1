@@ -106,7 +106,7 @@ private:
   asipErr_t deregisterPinMode(byte pin);
   pinMode_t getPinMode(byte pin); 
   char getServiceId(byte pin); 
-  void setPinMode(byte pin, pinMode_t mode); 
+  void storePinMode(byte pin, pinMode_t mode); 
   void sendPinCapabilites();
   void sendPinServicesList();
 

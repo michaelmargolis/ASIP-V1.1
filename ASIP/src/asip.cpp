@@ -22,7 +22,11 @@ SendOnlySoftwareSerial debugSoftSerial (DEBUG_TX_PIN);
 char const *errStr[] = {"NO_ERROR", "INVALID_SERVICE", "UNKNOWN_REQUEST", "INVALID_PIN", "MODE_UNAVAILABLE", "INVALID_MODE", "WRONG_MODE", "INVALID_DEVICE_NUMBER", "DEVICE_NOT_AVAILABLE", "I2C NOT ENABLED"};
  
 asipClass:: asipClass(){
-  
+    // moved here from begin 6 May 2017
+    // set all pins to UNALLOCATED_PIN state  
+  for(byte p=0; p < TOTAL_PINCOUNT; p++) { 
+     storePinMode(p, UNALLOCATED_PIN_MODE);
+  }
 }
  
 void asipClass::begin(Stream *s, int svcCount, asipServiceClass **serviceArray, char const *sketchName )
@@ -40,10 +44,7 @@ void asipClass::begin(Stream *s, int svcCount, asipServiceClass **serviceArray, 
 
   services = serviceArray;
   nbrServices = svcCount; 
-  // set all pins to UNALLOCATED_PIN state
-  for(byte p=0; p < TOTAL_PINCOUNT; p++) { 
-     setPinMode(p, UNALLOCATED_PIN_MODE);
-  }
+
 #ifdef DEBUG_TX_PIN
   asip.reserve(DEBUG_TX_PIN); 
 #endif  
@@ -207,10 +208,12 @@ asipErr_t asipClass::registerPinMode(byte pin, pinMode_t mode, char serviceId)
 {
   asipErr_t err = ERR_NO_ERROR; 
   if(pin >= 0 && pin < TOTAL_PINCOUNT) {    
+    verbose_printf("registerPinMode for pin %d for mode %d by service %c\n", pin, mode, serviceId );  
     // only system can set RESERVE_MODE
-    if( (mode == RESERVED_MODE && serviceId == SYSTEM_SERVICE_ID) || isValidServiceId(serviceId) ){
-        if( getPinMode(pin) < RESERVED_MODE) {    
-          setPinMode(pin,mode); 
+    if( serviceId == id_IO_SERVICE || (mode == RESERVED_MODE && serviceId == SYSTEM_SERVICE_ID) || (mode == OTHER_SERVICE_MODE  && isValidServiceId(serviceId))){
+        verbose_printf("in register pin %d has mode %d\n", pin, getPinMode(pin) );   
+        if( getPinMode(pin) < RESERVED_MODE) {            
+          storePinMode(pin,mode); 
           pinRegister[pin].service = serviceId - '@';     
           verbose_printf("register pin %d for mode %d for service %c (as %d)\n", pin, mode,serviceId,pinRegister[pin].service );                       
         }
@@ -234,7 +237,7 @@ asipErr_t asipClass::deregisterPinMode(byte pin)
   asipErr_t err = ERR_NO_ERROR;  
   if(pin >= 0 && pin < TOTAL_PINCOUNT) {     
     if( getPinMode(pin) < RESERVED_MODE) {    
-      setPinMode(pin,UNALLOCATED_PIN_MODE);  
+      storePinMode(pin,UNALLOCATED_PIN_MODE);  
       verbose_printf("deregister  pin %d\n", pin);  
     }
     else {
@@ -272,12 +275,13 @@ asipServiceClass*  asipClass::serviceFromId( char tag)
     return svcPtr;  
 }   
 
-// Sets the mode of the given pin 
-void asipClass::setPinMode(byte pin, pinMode_t mode) 
+// Stores the mode of the given pin 
+void asipClass::storePinMode(byte pin, pinMode_t mode) 
 {
   if( pin >=0 && pin < TOTAL_PINCOUNT) {
     //pinModes[pin] = mode;
     pinRegister[pin].mode = mode; 
+   // Serial.print("!!!! pin "); Serial.print(pin); Serial.print(" set to mode "); Serial.println(mode);
   } 
 }
 

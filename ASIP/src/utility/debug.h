@@ -62,10 +62,10 @@ const char DEBUG_MSG_INDICATOR = '!';  // debug text within info messages are pr
 #define debugStream  (&Serial)
 //#define ASIP_VERBOSE_DEBUG
 #define ASIP_DEBUG_BAUD 57600  // 57600 is highest rate for 8MHz boards 
-#define ASIP_DEBUG_BUFFER_SIZE 120 // max length of a debug string
+#define ASIP_DEBUG_BUFFER_SIZE 140 // max length of a debug string
 
 #if defined (ASIP_VERBOSE_DEBUG) && defined(ASIP_DEBUG)
-#define verbose_printf(...) debug_printf(...) 
+#define verbose_printf debug_printf 
 #else 
 #define verbose_printf(...)
 #endif
@@ -74,7 +74,7 @@ const char DEBUG_MSG_INDICATOR = '!';  // debug text within info messages are pr
 //#define ASIP_DEBUG_SOFT_SERIAL
 
 #if defined(__MK20DX256__) // Teensy 3.1
-#define debug_printf                     \
+#define debug_printf                    \
     debugStream->write(DEBUG_MSG_INDICATOR); \
     debugStream->printf
 #else  // 8 bit MCUs assume no built-in  printf support

@@ -19,6 +19,7 @@ RobotMotor::RobotMotor(const byte pins[], Encoder *encoder)
 
 void RobotMotor::begin(int direction)
 {
+  debug_printf("motor using pins %d,%d,%d\n", pins[0], pins[1], pins[2]) ;  
   pinMode(pins[in1Pin], OUTPUT);
   pinMode(pins[in2Pin], OUTPUT);
   //pinMode(standbyPin, OUTPUT);

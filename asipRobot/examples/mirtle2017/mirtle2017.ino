@@ -66,9 +66,13 @@ asipService services[] = {
 void setup()
 {
   asipLCD.begin();
-  beginAsipComms();  
   asip.reserve(SDA);  // reserve pins used by I2C 
   asip.reserve(SCL);  // these defines are in pins_arduino.h  
+#ifdef neoPixelPin  
+  asipPixels.begin(neoPixelPin, &strip); 
+#endif  
+  pixelFun();
+  beginAsipComms();  
   
   // start the services
   motors.begin(2,6,motorPins,4,encoderPins); // two motors,a total of 6 motor pins,4 encoder pins    
@@ -81,15 +85,11 @@ void setup()
 #ifdef tonePin  
   asipTone.begin(tonePin);
 #endif    
-#ifdef neoPixelPin  
-  asipPixels.begin(neoPixelPin, &strip);
-#endif  
 #ifdef ledPin  
  asipIO.PinMode(ledPin,OUTPUT_MODE); 
 #endif  
 
-  asipIO.begin();  // NEW from  v1.1: core I/O service must follow all other service begin methods
-  
+  asipIO.begin();  // NEW from  v1.1: core I/O service must follow all other service begin methods  
   asip.sendPinModes(); // for debug
   asip.sendPortMap(); 
 
@@ -99,7 +99,7 @@ void setup()
     Serial.print(" is service ");
     Serial.write(services[i]->getServiceId());
     Serial.println();  
-  }
+  }  
 }
 
 void beginAsipComms()
@@ -132,4 +132,12 @@ void loop()
   asip.service();
 }
 
-  
+void pixelFun()
+{
+   asipPixels.setPixelColor(0,0,32,0); 
+   delay(1000);
+   asipPixels.setPixelColor(0,32,32,32); 
+   delay(1000);
+   asipPixels.setPixelColor(0,32,0,0); 
+   delay(1000);
+}

@@ -254,7 +254,7 @@ void asipIOClass::processRequestMsg(Stream *stream)
    if( request == tag_PIN_MODE || request == tag_DIGITAL_WRITE || request == tag_ANALOG_WRITE) {
      pin = stream->parseInt();
      value = stream->parseInt();
-     //verbose_printf("Request %c for pin %d with val=%d\n", request, pin,value);
+     verbose_printf("Request %c for pin %d with val=%d\n", request, pin,value);
    }
    asipErr_t err = ERR_NO_ERROR;   
    switch(request) {
@@ -366,7 +366,7 @@ asipErr_t asipIOClass::PinMode(byte pin, int mode)
       digitalWrite(PIN_TO_DIGITAL(pin), LOW); // disable PWM
       pinMode(PIN_TO_DIGITAL(pin), OUTPUT_MODE);
       err = asip.registerPinMode(pin,OUTPUT_MODE, ServiceId);
-      verbose_printf("set pin %d to output mode\n", pin);
+      verbose_printf("set pin %d to output mode, err val=%d\n", pin, err);
 
     }
     break;
@@ -390,6 +390,8 @@ asipErr_t asipIOClass::PinMode(byte pin, int mode)
        }     
     break;
   }
+  if( err != ERR_NO_ERROR)
+     verbose_printf("PinMode returning err val %d for pin %d\n", err, pin);
   return err;
 }
 

@@ -24,8 +24,9 @@ void asipPixelsClass::begin(byte pin, Adafruit_NeoPixel* strip)
 {
     stripPtr = strip; 
     strip->begin();  // initialize the NeoPixel library.
-    strip->setBrightness(DEFAULT_BRIGHTNESS); // 1/4 brightness
-    asipServiceClass::begin(pin); // reserve the pin    
+    strip->setBrightness(DEFAULT_BRIGHTNESS); // 1/4 brightness  
+    pinMode(pin, OUTPUT);
+    asipServiceClass::begin(pin); // register the pin 
 }
 
 void asipPixelsClass::begin(byte nbrElements, const pinArray_t pins[], Adafruit_NeoPixel* strips)
@@ -34,6 +35,7 @@ void asipPixelsClass::begin(byte nbrElements, const pinArray_t pins[], Adafruit_
   stripPtr = strips; 
   for(int i=0; i < nbrElements; i++) {     
     strips[i].begin();  // initialize the NeoPixel library.
+    pinMode(pins[i], OUTPUT);
     strips[i].setBrightness(DEFAULT_BRIGHTNESS); // 1/4 brightness
   }
   asipServiceClass::begin(nbrElements,nbrElements,pins);
@@ -58,9 +60,9 @@ void asipPixelsClass::processRequestMsg(Stream *stream)
    int request = stream->read();  
    //stream->print("processing request "); stream->write(request); stream->println();
    if( request == tag_SET_PIXELS) 
-   {
-     //Comma separated pairs of colon separated pixel positions and color values
-      // request:  "P,P,strip,count,{pixel:color,...}\n"  // first pixel is 0  
+   {       
+       //Comma separated pairs of colon separated pixel positions and color values
+      // request:  "P,P,strip,count,{pixel:color,...}\n"  // first pixel is 0        
       int stripIndex = stream->parseInt();        // todo - validate stripIndex range
       int count = stream->parseInt();  
       debug_printf("got pixel msg for %d pixels on strip %d\n", count, stripIndex);
@@ -73,6 +75,7 @@ void asipPixelsClass::processRequestMsg(Stream *stream)
            unsigned long color = stream->parseInt();
            debug_printf("set pixel %d to %d\n", pixel, color);           
            stripPtr[stripIndex].setPixelColor(pixel, color);
+           setPixelColor(pixel, color);
         }
         stripPtr[stripIndex].show();        
       }
@@ -192,7 +195,8 @@ uint32_t asipPixelsClass::parseRGB(Stream *stream)
 
 // enable calling from sketch to control strip 0
 void asipPixelsClass::setPixelColor(int pixel, uint32_t color) 
-{
+{ 
+  debug_printf("in func, set pixel %d to hex %x\n", pixel, color);
   stripPtr[0].setPixelColor(pixel, color);  
   stripPtr[0].show();    
 }
