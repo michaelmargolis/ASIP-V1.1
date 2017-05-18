@@ -20,7 +20,7 @@
 
 //IDs already used by the core mirtle services:  I,M,E,B,R
 
-// RGB Pixel service
+// Tone service
 const char id_TONE_SERVICE = 'T';
 // methods
 const char tag_PLAY = 'P';            // play tone of given frequency and duration

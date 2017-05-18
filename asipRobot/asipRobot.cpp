@@ -55,7 +55,7 @@ robotMotorClass::robotMotorClass(const char svcId, const char evtId)
  * pinCount is three times the number of motors  
  */
  void robotMotorClass::begin(byte nbrElements, byte motorPinCount, const pinArray_t pins[], byte encoderPinCount, const pinArray_t encoderPins[])
-{  
+{
   asipServiceClass::begin(nbrElements,motorPinCount,pins, encoderPinCount, encoderPins);
   if (restoreConfig() == false) // try and retrieve saved PID from eeprom
   {
@@ -194,6 +194,13 @@ void robotMotorClass::stopMotors()
     }    
 }
    
+void robotMotorClass::resetEncoderTotals()
+{
+    for(int i=0; i < NBR_WHEELS; i++ ){
+       wheel[i].encoderResetCume();
+    }    
+}
+   
 void robotMotorClass::processRequestMsg(Stream *stream)
 {
    int arg0 =-1, arg1 = -1, arg2=-1; 
@@ -205,12 +212,12 @@ void robotMotorClass::processRequestMsg(Stream *stream)
         encoderEventsFlag = (arg0 != 0);  
    }
    else{ 
-       if( request != tag_STOP_MOTOR) {
+       if( !(request == tag_STOP_MOTORS || request == tag_RESET_ENCODERS) ) { // these have no args                 
           arg1 = stream->parseInt();  
           if( request == tag_SET_MOTOR_RPM || request == tag_SET_MOTORS_RPM ) {
             arg2 = stream->parseInt();  
           }
-       }       
+       }           
        switch(request) {
           case tag_SET_MOTOR:  setMotorPower(arg0,arg1);  break;
           case tag_SET_MOTORS: setMotorPowers(arg0,arg1);break; // TODO this assumes only two motors
@@ -220,8 +227,10 @@ void robotMotorClass::processRequestMsg(Stream *stream)
           case tag_ROTATE_ROBOT_ANGLE: rotateRobot(arg0, arg1); break ;
           case tag_STOP_MOTOR:  stopMotor(arg0); break;
           case tag_STOP_MOTORS: stopMotors(); break; 
+          case tag_RESET_ENCODERS: resetEncoderTotals(); break;
           default: reportError(ServiceId, request, ERR_UNKNOWN_REQUEST, stream);
        }
+       
    }
 }
 
@@ -249,7 +258,6 @@ void encoderClass::reportValues(Stream *stream)
 
 void encoderClass::reset()
 {
- Serial.println("encoder reset called !!");
   wheel[0].encoderResetCume();
   wheel[1].encoderResetCume();  
 }

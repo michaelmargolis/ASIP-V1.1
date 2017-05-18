@@ -168,7 +168,8 @@ long RobotMotor::encoderPos()
 }
 
 void RobotMotor::encoderResetCume()
-{
+{    
     encoder->write(0);
+    prevPos =0;
 }
 

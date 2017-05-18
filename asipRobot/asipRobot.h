@@ -29,6 +29,7 @@ const char tag_SET_ROBOT_SPEED_CM   = 'c'; // speed in Cm per Sec using PID
 const char tag_ROTATE_ROBOT_ANGLE   = 'a'; // Robot rotation using given degrees per second and angle 
 const char tag_STOP_MOTOR           = 's';  
 const char tag_STOP_MOTORS          = 'S';
+const char tag_RESET_ENCODERS       = 'E'; // rest total counts to zero
 
 
 
@@ -70,6 +71,7 @@ public:
    void rotateRobot( int dps, int angle);
    void stopMotor(byte motor);
    void stopMotors();
+   void resetEncoderTotals();
    void processRequestMsg(Stream *stream);
  //  void reportName(Stream *stream);
  private:

@@ -20,7 +20,7 @@
 
 //IDs already used by the core mirtle services:  I,M,E,B,R
 
-// RGB Pixel service
+// OLED LCD service
 const char id_LCD_SERVICE = 'L';
 // methods
 const char tag_WRITE = 'W';            // write a line of text
