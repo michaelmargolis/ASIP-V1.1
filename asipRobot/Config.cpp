@@ -4,7 +4,7 @@
  */
 
 #include "config.h" 
-#include "utility\debug.h" // this file is in the ASIP library folder
+#include "utility/debug.h" // this file is in the ASIP library folder
 #include <EEPROM.h>
 
 
