@@ -108,6 +108,8 @@ void robotMotorClass::reportValues(Stream *stream)
    count[0] = wheel[0].encoderPos(); 
    delta[1] = wheel[1].encoderDelta();
    count[1] = wheel[1].encoderPos();
+   wheel[0].isRampingPwm();  // motor acceleration control 
+   wheel[1].isRampingPwm();
    if( wheel[0].PID->isPidServiceNeeded()) {
        if(!wheel[0].PID->servicePid(delta[0], leftMotorCallback))
             wheel[0].stopMotor();

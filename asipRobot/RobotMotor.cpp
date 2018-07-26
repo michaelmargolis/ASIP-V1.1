@@ -25,7 +25,7 @@ void RobotMotor::begin(int direction)
   //pinMode(standbyPin, OUTPUT);
   
   motorDirectionMode = direction ; // flag to set rotation when moving forward 
-  //motorDirection = DIR_FORWARD;    // indicates if wheel moves robot forward or backward  
+  absPwm = prevAbsPwm = 0; 
   motorBrakeMode = false;  // freewheel
   motorStandbyMode = 0;     
   stopMotor();
@@ -96,13 +96,13 @@ void RobotMotor::setMotorPwm(int requestedPwm)
 {
   int motorDirection = requestedPwm >= 0 ? 1 : -1;    
   pwm = constrain(requestedPwm, -MAX_PWM, MAX_PWM);
-  int absPwm = abs(pwm);  
+  absPwm = abs(pwm);  
 
   digitalWrite(pins[in1Pin],  !(motorDirection * motorDirectionMode  == 1) );
   //invert the direction for the second control line
   digitalWrite(pins[in2Pin], (motorDirection * motorDirectionMode == 1) );
   //debug_printf("in setMotor: %s pin %d is %d, %d is %d\n", label, pins[in1Pin], digitalRead(pins[in1Pin]),pins[in2Pin], digitalRead(pins[in2Pin])  );     
-  isRampingPwm(absPwm);  // control power ramp  
+  isRampingPwm();  // control power ramp  
   //debug_printf("in setMotor: %s pwm=%d, absPwm=%d, dir=%d, dir mode=%d, dir mask=%d\n", label, pwm, absPwm, motorDirection, motorDirectionMode, (motorDirectionMode ==1));     
 }
 
@@ -112,7 +112,7 @@ void RobotMotor::setMotorPwm(int requestedPwm)
  * needed to prevent motor from drawing too much current at startup 
  * isRamping returns true if the current motor pwm is at least as much as the target PWM  
  */
-boolean RobotMotor::isRampingPwm(int absPwm) // returns true if motor coming up to speed
+boolean RobotMotor::isRampingPwm() // returns true if motor coming up to speed
 {
   if( prevAbsPwm >= absPwm){
     //debug_printf("in isRampingPwm, %s writing %d but returning false because prevAbsPwm (%d) is >=  absPwm (%d)\n", label, absPwm,  prevAbsPwm, absPwm);

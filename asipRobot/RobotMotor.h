@@ -38,6 +38,7 @@ class RobotMotor
         void setMotorRPM(int RPM, unsigned long duration); // duration in ms 
         void setMotorPwm(int pwm);        
         void setMotorLabel(const char *label); // for debug print only  
+        boolean isRampingPwm(); // returns true if motor coming up to speed        
 
         // encoder methods
         long encoderDelta();
@@ -50,9 +51,8 @@ class RobotMotor
     private:
         void initialise();
         int powerToPWM(int power);
-        boolean isRampingPwm(int absPwm); // returns true if motor coming up to speed        
         int pwm; // todo - stores curent pwm, sign indicates if motor moving forward or backward 
-        //int absPwm;
+        int absPwm;
         int prevAbsPwm;
         //int motorDirection;  // 1 is forward, -1 is reverse
         int motorDirectionMode;  //1 normal dir, -1 dir inverted
